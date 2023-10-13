@@ -81,22 +81,28 @@ color: lightskyblue;
 }
 
 
-button:not(:disabled):hover {
+.search-btn:not(:disabled):hover {
     border: 5px solid lightblue;
 }
-button:disabled {
+.search-btn:disabled {
     border: 5px solid yellow;
     background: rgba(251, 255, 0, -5);
 }
-/* 
-.load-more:not(:disabled):hover {
-    border: 5px solid lightblue;
-}
-.load-more:disabled {
-    border: 5px solid yellow;
-    background: rgba(251, 255, 0, -5);
-} */
 
+.load-more {
+    width: auto;
+    padding: 7px;
+    border: 5px solid yellow;
+    color: rgba(23, 14, 185, 0.907);
+    box-shadow: 0 0 25px 2px rgba(251, 255, 0, 1);
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(9,159,248,1) 26%, rgba(255,248,0,1) 81%);
+}
+
+.load-more:hover {
+  border: 5px solid yellow;
+  background: rgba(251, 255, 0, 5);
+}
 .order-list-icon {
 margin-right: 10px;
   }

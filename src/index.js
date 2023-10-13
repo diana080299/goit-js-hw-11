@@ -17,7 +17,7 @@ axios.defaults.baseURL = 'https://pixabay.com/api/';
 const KEY = '39787944-43ec837227cb503858330c56a';
 
  function getValue() {
-  const input = form.elements.searchQuery;
+  let input = form.elements.searchQuery;
   let inputValue = input.value.trim();
 
   return inputValue;
@@ -29,33 +29,59 @@ async function handleSearch(event) {
   disableEl(searchBtn, true)
   page = 1;
   
- let inputValue = getValue();
-
-  if (!inputValue) {
-    disableEl(searchBtn, false)
-    Notiflix.Notify.failure('Fit the search');
-    return;
-  }
+  let inputValue = getValue();
+  reset(container)
+  
+  
   try {
     const data = await serviceImages(inputValue);
+
+    if (!inputValue ) {
+      disableEl(searchBtn, false)
+      Notify.failure('Fit the search');
+      return;
+    }
+    
     if (data.totalHits < 40) {
       const markupEl = markUp(data.hits);
       container.innerHTML = markupEl;
-      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.` , {
+        position: 'center-center',
+        timeout: 2000,
+        width: '400px',
+        fontSize: '24px'
+    });
       return;
-    } else {
+    } 
+    if (!data.hits.length) {
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      return;
+    }
+    else {
       scrolObs.observe(contImg);
-      reset(gallery);
-      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);``
+      reset(gallery)
+      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`, {
+        position: 'center-center',
+        timeout: 2000,
+        width: '400px',
+        fontSize: '24px'
+    });
     }
     
   } catch (error) {
     Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
+      'Sorry, there are no images matching your search query. Please try again.' , {
+        position: 'center-center',
+        timeout: 2000,
+        width: '400px',
+        fontSize: '24px'
+    }
     );
   } finally {
     disableEl(searchBtn, false)
-  //  reset(contImg);
+  //  reset(gallery);
   }
 }
 
@@ -70,6 +96,7 @@ let options = {
 let scrolObs = new IntersectionObserver(onLoadScroll, options);
 
 
+
 async function onLoadScroll(entries) {
   entries.forEach(async entry => {
     if (entry.isIntersecting) {
@@ -77,12 +104,19 @@ async function onLoadScroll(entries) {
       let inputValue = getValue();
       const data = await serviceImages(inputValue, page);
       const markupEl = markUp(data.hits);
+      reset(gallery)
       container.innerHTML += markupEl;
       if (page > data.totalHits / 40) {
-        scrolObs.unobserve(target);
+        scrolObs.unobserve(contImg);
         Notiflix.Notify.info(
           "We're sorry, but you've reached the end of search results."
-        );
+          , {
+            position: 'center-center',
+            timeout: 1500,
+            width: '400px',
+            fontSize: '28px',
+            background: '#32c682',
+        });
         smoothScroll();
       }
     }
