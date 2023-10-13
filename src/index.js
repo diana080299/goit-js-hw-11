@@ -11,14 +11,14 @@ form.addEventListener('submit', handleSearch);
 
 
 let gallery = new SimpleLightbox('.photo-card a');
-let page;
+let page = 1;
 
-const KEY = '39787944-43ec837227cb503858330c56a';``
 axios.defaults.baseURL = 'https://pixabay.com/api/';
+const KEY = '39787944-43ec837227cb503858330c56a';
 
  function getValue() {
   const input = form.elements.searchQuery;
-  const inputValue = input.value.trim();
+  let inputValue = input.value.trim();
 
   return inputValue;
 }
@@ -29,9 +29,7 @@ async function handleSearch(event) {
   disableEl(searchBtn, true)
   page = 1;
   
-  inputValue = getValue();
-
-  reset(gallery)
+ let inputValue = getValue();
 
   if (!inputValue) {
     disableEl(searchBtn, false)
@@ -45,23 +43,21 @@ async function handleSearch(event) {
       container.innerHTML = markupEl;
       Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
       return;
+    } else {
+      scrolObs.observe(contImg);
+      reset(gallery);
+      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);``
     }
-    scrolObs.observe(contImg);
-  
-    reset(gallery);
     
-    Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
   } catch (error) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   } finally {
-    event.target.reset();
-    disableEl(searchBtn, true)
+    disableEl(searchBtn, false)
+  //  reset(contImg);
   }
 }
-
-
 
 
 
@@ -71,14 +67,14 @@ let options = {
   threshold: 1.0,
 };
 
-
 let scrolObs = new IntersectionObserver(onLoadScroll, options);
+
 
 async function onLoadScroll(entries) {
   entries.forEach(async entry => {
     if (entry.isIntersecting) {
       page += 1;
-      inputValue = getValue(form);
+      let inputValue = getValue();
       const data = await serviceImages(inputValue, page);
       const markupEl = markUp(data.hits);
       container.innerHTML += markupEl;
